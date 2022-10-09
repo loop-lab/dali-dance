@@ -1,0 +1,1 @@
+<span class="{{ $is_active ? 'text-success' : 'text-danger' }}">●</span>
