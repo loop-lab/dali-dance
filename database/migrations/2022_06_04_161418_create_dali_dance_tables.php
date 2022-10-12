@@ -89,10 +89,10 @@ return new class extends Migration
     {
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('teacher_id');
+            $table->unsignedBigInteger('customer_id');
             $table->date('date_lessons');
-            $table->primary(['customer_id', 'teacher_id', 'date_lessons']);
+            $table->primary(['teacher_id', 'customer_id', 'date_lessons']);
         });
     }
 

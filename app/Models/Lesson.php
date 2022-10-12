@@ -12,6 +12,8 @@ class Lesson extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'customer_id',
         'teacher_id',

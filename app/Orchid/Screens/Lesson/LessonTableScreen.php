@@ -2,11 +2,9 @@
 
 namespace App\Orchid\Screens\Lesson;
 
-use App\Models\Lesson;
-use App\Models\Customer;
 use Orchid\Screen\Screen;
-use Orchid\Support\Facades\Layout;
-use App\Orchid\Layouts\Style\LessonTableLayout;
+use Illuminate\Support\Facades\DB;
+use App\Orchid\Layouts\Lessons\LessonTableLayout;
 
 class LessonTableScreen extends Screen
 {
@@ -17,12 +15,23 @@ class LessonTableScreen extends Screen
      */
     public function query(): iterable
     {
-        $customer = Customer::with(['teachers'])->find(1);
-        $cus = $customer->toArray();
-        $cus['teachers'] = $customer->teachers->groupBy('pivot.date_lessons')->sortKeys()->toArray();
+        $page = 1;
 
         return [
-            'customer' => $cus,
+            'lessons' => DB::table('lessons')
+                ->select(DB::raw("
+                    lessons.date_lessons as date,
+                    concat(teachers.last_name, ' ', teachers.name) as teacher,
+                    count(lessons.customer_id) as countCustomer,
+                    group_concat(customers.last_name) as customers,
+                    (count(lessons.customer_id) * 150) as price
+                "))
+                ->join('teachers', 'lessons.teacher_id', '=', 'teachers.id')
+                ->join('customers', 'lessons.customer_id', '=', 'customers.id')
+                ->groupBy('date', 'teacher')
+                ->limit(100)
+                ->offset(($page-1)*100)
+                ->get(),
         ];
     }
 
@@ -55,6 +64,7 @@ class LessonTableScreen extends Screen
     public function layout(): iterable
     {
         return [
+            LessonTableLayout::class,
         ];
     }
 }

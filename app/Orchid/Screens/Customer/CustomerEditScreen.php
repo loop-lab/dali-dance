@@ -2,6 +2,8 @@
 
 namespace App\Orchid\Screens\Customer;
 
+use Carbon\Carbon;
+use App\Models\Lesson;
 use App\Models\Ticket;
 use App\Models\Customer;
 use Orchid\Screen\Screen;
@@ -81,14 +83,19 @@ class CustomerEditScreen extends Screen
             CustomerEditLayout::class,
             Layout::modal('qrCode', [
                 Layout::view('picture'),
-            ])->withoutApplyButton()->withoutCloseButton()
-            ->title('QR-код')
+            ])->withoutApplyButton()->withoutCloseButton()->title('QR-код'),
         ];
     }
 
-    public function checkLesson(Request $request, Customer $customer): void
+    public function checkLesson(Request $request, Customer  $customer): void
     {
-        Toast::warning($request->get('toast', 'Посещение отмечено!'));
+        $tickets = $request->get('tickets')[0];
+        Lesson::create([
+            'customer_id' => $customer->id,
+            'teacher_id' => $tickets['teacher'],
+            'date_lessons' => Carbon::now()->format('Y-m-d'),
+        ]);
+        Toast::success('Посещение отмечено!');
     }
 
     public function save(Request $request, Customer $customer)
