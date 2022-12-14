@@ -3,10 +3,10 @@
 namespace App\Orchid\Layouts\Lessons;
 
 use Orchid\Screen\TD;
-use App\Models\Lesson;
+use App\Models\Teacher;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Layouts\Table;
-use Orchid\Screen\Fields\DateTimer;
+use Orchid\Screen\Fields\DateRange;
 
 class LessonTableLayout extends Table
 {
@@ -22,13 +22,11 @@ class LessonTableLayout extends Table
     {
         return [
             TD::make('date', 'Дата')->sort()
-                ->filter(DateTimer::make()->format('Y-m-d'))
                 ->render(function ($lessons) {
                     return $lessons->date;
                 }),
 
             TD::make('teacher', 'Преподаватель')->sort()
-                ->filter(Select::make())
                 ->render(function ($lessons) {
                     return $lessons->teacher;
                 }),
