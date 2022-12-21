@@ -18,6 +18,7 @@ class Lesson extends Model
         'customer_id',
         'teacher_id',
         'date_lessons',
+        'is_payed'
     ];
 
     public function customer(): Relation

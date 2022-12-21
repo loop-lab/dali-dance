@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace App\Orchid\Filters;
 
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\Teacher;
+use Orchid\Screen\Field;
 use Orchid\Filters\Filter;
 use Orchid\Platform\Models\Role;
-use Orchid\Screen\Field;
 use Orchid\Screen\Fields\Select;
+use Illuminate\Database\Eloquent\Builder;
 
-class RoleFilter extends Filter
+class TeacherFilter extends Filter
 {
     /**
      * @return string
      */
     public function name(): string
     {
-        return __('Roles');
+        return 'Преподаватель';
     }
 
     /**
@@ -27,7 +28,7 @@ class RoleFilter extends Filter
      */
     public function parameters(): ?array
     {
-        return ['role'];
+        return ['teacher'];
     }
 
     /**
@@ -37,8 +38,8 @@ class RoleFilter extends Filter
      */
     public function run(Builder $builder): Builder
     {
-        return $builder->whereHas('roles', function (Builder $query) {
-            $query->where('slug', $this->request->get('role'));
+        return $builder->whereHas('teacher_id', function (Builder $query) {
+            $query->where('teacher_id', $this->request->get('teacher'));
         });
     }
 
@@ -48,11 +49,11 @@ class RoleFilter extends Filter
     public function display(): array
     {
         return [
-            Select::make('role')
-                ->fromModel(Role::class, 'name', 'slug')
+            Select::make('teacher')
+                ->fromModel(Teacher::class, 'last_name')
                 ->empty()
-                ->value($this->request->get('role'))
-                ->title(__('Roles')),
+                ->value($this->request->get('teacher'))
+                ->title('Преподаватель'),
         ];
     }
 
@@ -61,6 +62,7 @@ class RoleFilter extends Filter
      */
     public function value(): string
     {
-        return $this->name() . ': ' . Role::where('slug', $this->request->get('role'))->first()->name;
+        $teacher = Teacher::find($this->request->get('teacher'));
+        return $this->name().': '.$teacher->last_name.' '.$teacher->name;
     }
 }

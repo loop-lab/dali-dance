@@ -92,6 +92,7 @@ return new class extends Migration
             $table->unsignedBigInteger('teacher_id');
             $table->unsignedBigInteger('customer_id');
             $table->date('date_lessons');
+            $table->boolean('is_payed');
             $table->primary(['teacher_id', 'customer_id', 'date_lessons']);
         });
     }
