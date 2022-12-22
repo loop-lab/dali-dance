@@ -129,16 +129,16 @@ class UserEditScreen extends Screen
                         ->method('save')
                 ),
 
-            Layout::block(UserRoleLayout::class)
-                ->title(__('Roles'))
-                ->description(__('A Role defines a set of tasks a user assigned the role is allowed to perform.'))
-                ->commands(
-                    Button::make(__('Save'))
-                        ->type(Color::DEFAULT())
-                        ->icon('check')
-                        ->canSee($this->user->exists)
-                        ->method('save')
-                ),
+            // Layout::block(UserRoleLayout::class)
+            //     ->title(__('Roles'))
+            //     ->description(__('A Role defines a set of tasks a user assigned the role is allowed to perform.'))
+            //     ->commands(
+            //         Button::make(__('Save'))
+            //             ->type(Color::DEFAULT())
+            //             ->icon('check')
+            //             ->canSee($this->user->exists)
+            //             ->method('save')
+            //     ),
 
             Layout::block(RolePermissionLayout::class)
                 ->title(__('Permissions'))

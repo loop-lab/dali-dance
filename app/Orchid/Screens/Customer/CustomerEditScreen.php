@@ -3,12 +3,16 @@
 namespace App\Orchid\Screens\Customer;
 
 use Carbon\Carbon;
+use Orchid\Screen\TD;
 use App\Models\Lesson;
 use App\Models\Ticket;
+use App\Models\Teacher;
 use App\Models\Customer;
 use Orchid\Screen\Screen;
+use App\Models\TicketType;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Orchid\Screen\Layouts\Modal;
 use Orchid\Screen\Actions\Button;
 use Orchid\Support\Facades\Toast;
 use Orchid\Support\Facades\Layout;
@@ -51,8 +55,8 @@ class CustomerEditScreen extends Screen
     public function commandBar(): iterable
     {
         return [
-            Button::make('Отметить посещение!')
-                ->method('checkLesson')
+            ModalToggle::make('Отметить посещение!')
+                ->modal('check')
                 ->class('btn btn-success')
                 ->novalidate()
                 ->icon('check'),
@@ -84,15 +88,42 @@ class CustomerEditScreen extends Screen
             Layout::modal('qrCode', [
                 Layout::view('picture'),
             ])->withoutApplyButton()->withoutCloseButton()->title('QR-код'),
+
+            Layout::modal('check', [
+                Layout::table('tickets', [
+                    TD::make()->render(function (Ticket $model) {
+                        return Button::make()
+                            ->method('checkLesson', ['teacherId' => $model->teacher_id])
+                            ->class('btn btn-success')
+                            ->novalidate()
+                            ->icon('check');
+                    }),
+                    TD::make('id', 'ID')->render(function (Ticket $model) {
+                        return $model->id;
+                    }),
+                    TD::make('ticket_type', 'Абонемент')->render(function (Ticket $model) {
+                        return TicketType::where('id', $model->ticket_type_id)->first()->name;
+                    }),
+                    TD::make('teacher', 'Преподаватель')->render(function (Ticket $model) {
+                        $teacher = Teacher::where('id', $model->teacher_id)->first();
+                        return $teacher->last_name . ' ' . $teacher->name;
+                    }),
+                    TD::make('start_date', 'Дата начала')->render(function (Ticket $model) {
+                        return $model->start_date;
+                    }),
+                    TD::make('stop_date', 'Дата завершения')->render(function (Ticket $model) {
+                        return $model->stop_date;
+                    }),
+                ]),
+            ])->withoutApplyButton()->withoutCloseButton()->size(Modal::SIZE_LG)->title('Отметить посещение!'),
         ];
     }
 
-    public function checkLesson(Request $request, Customer  $customer): void
+    public function checkLesson(Request $request, Customer  $customer, $name, $teacherId): void
     {
-        $tickets = $request->get('tickets')[0];
         Lesson::create([
             'customer_id' => $customer->id,
-            'teacher_id' => $tickets['teacher'],
+            'teacher_id' => $teacherId,
             'date_lessons' => Carbon::now()->format('Y-m-d'),
         ]);
         Toast::success('Посещение отмечено!');
@@ -102,15 +133,21 @@ class CustomerEditScreen extends Screen
     {
         $requestCustomer = $request->get('customer');
         $requestCustomer['phone'] = preg_replace('/\D/', '', $requestCustomer['phone']);
+        $requestCustomer['bonuses'] = $requestCustomer['bonuses']  ?? 0;
         $customer->fill($requestCustomer);
         $customer->save();
 
         $requestTicket = $request->get('tickets');
+
+        $ticketIds = $requestTicket ? Arr::pluck($requestTicket, 'id') : null;
+        $deleteTicketIds = Ticket::where('customer_id', $customer->id)
+            ->when($ticketIds, function ($query, $ticketIds) {
+                $query->whereNotIn('id', $ticketIds);
+            })->get('id')->pluck('id')->toArray();
+        Ticket::whereIn('id', $deleteTicketIds)->delete();
+
         if (!empty($requestTicket)) {
-            $ticketIds = Arr::pluck($requestTicket, 'id');
-            $deleteTicketIds = Ticket::where('customer_id', $customer->id)
-                ->whereNotIn('id', $ticketIds)->get()->pluck('id');
-            Ticket::whereIn('id', $deleteTicketIds)->delete();
+            $countTicket = count($requestTicket);
 
             foreach ($requestTicket as $ticket) {
                 $ticket['customer_id'] = $customer->id;
@@ -121,6 +158,10 @@ class CustomerEditScreen extends Screen
                     $model = new Ticket();
                     $model->fill($ticket);
                     $model->save();
+
+                    $price = TicketType::find($ticket['ticket_type_id'])->price;
+                    $customer->bonuses += $countTicket == 1 ?  $price*0.01 : $price*0.005;
+                    $customer->save();
                 } else {
                     $model->update($ticket);
                 }

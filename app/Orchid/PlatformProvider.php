@@ -12,16 +12,6 @@ use Orchid\Screen\Actions\Menu;
 class PlatformProvider extends OrchidServiceProvider
 {
     /**
-     * @param Dashboard $dashboard
-     */
-    public function boot(Dashboard $dashboard): void
-    {
-        parent::boot($dashboard);
-
-        // ...
-    }
-
-    /**
      * @return Menu[]
      */
     public function registerMainMenu(): array
@@ -59,10 +49,10 @@ class PlatformProvider extends OrchidServiceProvider
                 ->permission('platform.systems.users')
                 ->title('Доступы'),
 
-            Menu::make(__('Roles'))
-                ->icon('lock')
-                ->route('platform.systems.roles')
-                ->permission('platform.systems.roles'),
+            // Menu::make(__('Roles'))
+            //     ->icon('lock')
+            //     ->route('platform.systems.roles')
+            //     ->permission('platform.systems.roles'),
         ];
     }
 
@@ -90,7 +80,7 @@ class PlatformProvider extends OrchidServiceProvider
                 ->addPermission('platform.systems.teachers', 'Преподаватели')
                 ->addPermission('platform.systems.styles', 'Стили')
                 ->addPermission('platform.systems.ticket_types', 'Абонементы')
-                ->addPermission('platform.systems.roles', __('Roles'))
+                // ->addPermission('platform.systems.roles', __('Roles'))
                 ->addPermission('platform.systems.users', __('Users')),
         ];
     }
