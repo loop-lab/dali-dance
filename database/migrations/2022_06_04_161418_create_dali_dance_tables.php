@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('phone', 11)->nullable();
             $table->unsignedInteger('bonuses')->default(0);
             $table->boolean('is_active');
+            $table->string('comment', 500)->default('');
             $table->timestamps();
         });
     }
@@ -92,6 +93,7 @@ return new class extends Migration
             $table->unsignedBigInteger('teacher_id');
             $table->unsignedBigInteger('customer_id');
             $table->date('date_lessons');
+            $table->boolean('is_payed');
             $table->primary(['teacher_id', 'customer_id', 'date_lessons']);
         });
     }

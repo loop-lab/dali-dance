@@ -15,6 +15,7 @@ use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Fields\Relation;
 use Orchid\Screen\Fields\DateTimer;
 use Orchid\Support\Facades\Layout;
+use Orchid\Screen\Layouts\Table;
 
 class CustomerShowLayout extends Rows
 {
@@ -47,12 +48,7 @@ class CustomerShowLayout extends Rows
                 Input::make('customer.bonuses')
                     ->type('number')
                     ->title('Бонусы')
-                    ->disabled(),
-
-                CheckBox::make('customer.is_active')
-                    ->title('Активность')
-                    ->sendTrueOrFalse()
-                    ->disabled(),
+                    ->disabled()
             ])->fullWidth(),
         ];
     }

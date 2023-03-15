@@ -19,6 +19,7 @@ class Customer extends Model
         'phone',
         'bonuses',
         'is_active',
+        'comment',
     ];
 
     public function lessons(): Relation

@@ -12,6 +12,7 @@ use Orchid\Screen\Layouts\Rows;
 use Orchid\Screen\Fields\Matrix;
 use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Fields\Relation;
+use Orchid\Screen\Fields\TextArea;
 use Orchid\Screen\Fields\DateTimer;
 
 class CustomerEditLayout extends Rows
@@ -57,6 +58,13 @@ class CustomerEditLayout extends Rows
                     ->title('Активность')
                     ->sendTrueOrFalse(),
             ])->fullWidth(),
+
+            TextArea::make('customer.comment')
+                ->type('text')
+                ->max(500)
+                ->rows(5)
+                ->title('Комментарий')
+                ->placeholder('Комментарий'),
 
             Matrix::make('tickets')
                 ->title('Абонементы')

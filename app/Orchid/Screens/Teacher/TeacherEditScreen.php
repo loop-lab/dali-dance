@@ -70,8 +70,8 @@ class TeacherEditScreen extends Screen
     public function save(Request $request, Teacher $teacher)
     {
         $teacher->fill($request->get('teacher'));
-        $teacher->style()->sync($request->get('style'));
         $teacher->save();
+        $teacher->style()->sync($request->get('style'));
 
         Toast::info($teacher->exists ? 'Данные преподавателя обновлены' : 'Добавлен новый преподаватель.');
 

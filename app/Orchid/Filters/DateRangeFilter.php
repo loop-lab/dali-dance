@@ -58,6 +58,6 @@ class DateRangeFilter extends Filter
     public function value(): string
     {
         $date = $this->request->get('date');
-        return $this->name() . ': ' . $date['start'].' - '.$date['end'];
+        return $this->name().': '.$date['start'].' - '.$date['end'];
     }
 }

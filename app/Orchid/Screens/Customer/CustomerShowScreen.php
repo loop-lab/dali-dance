@@ -3,6 +3,7 @@
 namespace App\Orchid\Screens\Customer;
 
 use Orchid\Screen\TD;
+use App\Models\Lesson;
 use App\Models\Ticket;
 use App\Models\Teacher;
 use App\Models\Customer;
@@ -27,6 +28,7 @@ class CustomerShowScreen extends Screen
             'customer' => $customer,
             'tickets' => Ticket::with(['ticketType', 'teacher'])
                 ->where('customer_id', $customer->id)->get(),
+            'lessons' => Lesson::with(['teacher'])->where('customer_id', $customer->id)->get(),
         ];
     }
 
@@ -79,6 +81,18 @@ class CustomerShowScreen extends Screen
                 }),
                 TD::make('stop_date', 'Дата завершения')->render(function (Ticket $model) {
                     return $model->stop_date;
+                }),
+            ]),
+            Layout::table('lessons', [
+                TD::make('date', 'Дата')->sort()
+                ->render(function ($lesson) {
+                    return $lesson->date_lessons;
+                }),
+
+            TD::make('teacher', 'Преподаватель')->sort()
+                ->render(function ($lesson) {
+                    $teacher = $lesson->teacher;
+                    return $teacher->last_name . ' ' . $teacher->name;
                 }),
             ]),
             Layout::modal('qrCode', [Layout::view('picture')])
