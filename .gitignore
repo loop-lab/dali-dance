@@ -2,7 +2,9 @@
 /bootstrap/cache
 /public/hot
 /public/storage
-/storage
+/storage/app
+/storage/logs
+/storage/framework
 /vendor
 .env
 .env.backup
