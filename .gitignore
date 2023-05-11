@@ -1,11 +1,11 @@
-/node_modules
-/bootstrap/cache
-/public/hot
-/public/storage
-/storage/app
-/storage/logs
-/storage/framework
-/vendor
+/node_modules/
+/bootstrap/cache/
+/public/hot/
+/public/storage/
+/storage/app/
+/storage/logs/
+/storage/framework/
+/vendor/
 .env
 .env.backup
 .phpunit.result.cache
@@ -13,5 +13,5 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-/.idea
-/.vscode
+/.idea/
+/.vscode/
